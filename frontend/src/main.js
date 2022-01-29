@@ -7,10 +7,12 @@ import {
 import App from './App.vue'
 
 import EditView from './views/Edit.vue'
+import InformationView from './views/Information.vue'
 import MainView from './views/Main.vue'
 
 const routes = [
   { path: '/', component: MainView },
+  { path: '/information', component: InformationView },
   { path: '/assignments/:assignmentId', component: EditView },
 ]
 

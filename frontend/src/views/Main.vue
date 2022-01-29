@@ -27,7 +27,9 @@
   </template>
 
   <template v-if="state === 'CRAFT'">
-    <p>Använd nedanstående formulär för att publicera ett konsultuppdrag till frilansargemenskapen.</p>
+    <p>Använd nedanstående formulär för att publicera ett konsultuppdrag till svenska frilansare och egenkonsulter inom it-branschen.</p>
+
+    <p>Vill du veta mer om vad det här är innan du går vidare? <router-link to="/information">Läs om den här tjänsten »</router-link></p>
 
     <form @submit.prevent="goToPreview">
       <div class="columns">
