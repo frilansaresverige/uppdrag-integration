@@ -1,0 +1,58 @@
+<template>
+  <div v-if="assignment" class="wrapper">
+    <h3>{{ assignment.title }}</h3>
+    <p>{{ assignment.description }}</p>
+
+    <h4>Uppdragsgivare</h4>
+    <p>{{ assignment.customerName }}</p>
+
+    <h4>Kontaktuppgifter</h4>
+    <p>{{ assignment.contact }}</p>
+
+    <template v-if="assignment.comments">
+      <template :key="comment.id" v-for="comment in assignment.comments">
+        <h4>Komplettering {{ niceTimestamp(comment.created) }}</h4>
+        <p>{{ comment.comment }}</p>
+      </template>
+    </template>
+  </div>
+</template>
+
+<script>
+import { format } from 'date-fns'
+import { sv } from 'date-fns/locale'
+
+export default {
+  name: 'Assignment',
+
+  methods: {
+    niceTimestamp(timestamp) {
+      return format(timestamp * 1000, "'den' PPP 'klockan' p", { locale: sv })
+    }
+  },
+
+  props: {
+    assignment: Object,
+  }
+}
+</script>
+
+<style scoped>
+.wrapper {
+  border: 1px dotted #cccccc;
+  margin-bottom: 25px;
+  padding: 15px;
+}
+
+.detail {
+  margin-bottom: 25px;
+}
+
+.wrapper p:last-of-type {
+  margin-bottom: 0;
+}
+
+p {
+  white-space: pre-wrap;
+}
+</style>

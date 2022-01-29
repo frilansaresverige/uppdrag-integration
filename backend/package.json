@@ -1,0 +1,14 @@
+{
+  "name": "uppdrag-backend",
+  "version": "1.0.0",
+  "dependencies": {
+    "axios": "^0.25.0",
+    "body-parser": "^1.19.1",
+    "express": "^4.17.2",
+    "mysql2": "^2.3.3",
+    "nodemailer": "^6.7.2"
+  },
+  "scripts": {
+    "start": "node src/index.js"
+  }
+}
