@@ -10,12 +10,12 @@ exports.setPool = pool => {
 }
 
 exports.saveAssignment = async (emailAddress, customerName, title, description, contact) => {
-	const id = common.randomString()
-	const created = common.getTimestamp()
-	const slackId = null
+  const id = common.randomString()
+  const created = common.getTimestamp()
+  const slackId = null
 
-	await this.pool.query(
-		`
+  await this.pool.query(
+    `
 		INSERT INTO assignment (
 			id,
 			emailAddress,
@@ -28,25 +28,25 @@ exports.saveAssignment = async (emailAddress, customerName, title, description, 
 		)
 		VALUES(?, ?, ?, ?, ?, ?, ?, ?)
 		`, [
-			id,
-			emailAddress,
-			customerName,
-			title,
-			description,
-			contact,
-			created,
-			slackId,
-		]
-	)
+      id,
+      emailAddress,
+      customerName,
+      title,
+      description,
+      contact,
+      created,
+      slackId,
+    ],
+  )
 
-	slack.propagateAssignment(id)
+  slack.propagateAssignment(id)
 
-	return id
+  return id
 }
 
 exports.getAssignment = async assignmentId => {
-	const [assignments] = await this.pool.query(
-		`
+  const [assignments] = await this.pool.query(
+    `
 		SELECT
 			id,
 			emailAddress,
@@ -59,32 +59,32 @@ exports.getAssignment = async assignmentId => {
 		FROM assignment
 		WHERE id = ?
 		`,
-		[assignmentId],
-	)
+    [assignmentId],
+  )
 
-	if (assignments.length !== 1) {
-		return null
-	}
+  if (assignments.length !== 1) {
+    return null
+  }
 
-	return assignments[0]
+  return assignments[0]
 }
 
 exports.assignmentExists = async assignmentId => {
-	const count = (await this.pool.query(
-		`
+  const count = (await this.pool.query(
+    `
 		SELECT COUNT(*) AS count
 		FROM assignment
 		WHERE id = ?
 		`,
-		[assignmentId],
-	))[0][0].count
+    [assignmentId],
+  ))[0][0].count
 
-	return count === 1
+  return count === 1
 }
 
 exports.getAssignmentComments = async assignmentId => {
-	const [comments] = await this.pool.query(
-		`
+  const [comments] = await this.pool.query(
+    `
 		SELECT
 			id,
 			comment,
@@ -93,18 +93,18 @@ exports.getAssignmentComments = async assignmentId => {
 		FROM assignmentComment
 		WHERE assignment = ?
 		`,
-		[assignmentId],
-	)
+    [assignmentId],
+  )
 
-	return comments
+  return comments
 }
 
 exports.saveAssignmentComment = async (assignmentId, comment) => {
-	const created = common.getTimestamp()
-	const slackId = null
+  const created = common.getTimestamp()
+  const slackId = null
 
-	await this.pool.query(
-		`
+  await this.pool.query(
+    `
 		INSERT INTO assignmentComment (
 			assignment,
 			id,
@@ -118,36 +118,36 @@ exports.saveAssignmentComment = async (assignmentId, comment) => {
 			WHERE t.assignment = ?
 		), ?, ?, ?)
 		`, [
-			assignmentId,
-			assignmentId,
-			comment,
-			created,
-			slackId,
-		]
-	)
+      assignmentId,
+      assignmentId,
+      comment,
+      created,
+      slackId,
+    ],
+  )
 
-	slack.propagateAssignmentComments(assignmentId)
+  slack.propagateAssignmentComments(assignmentId)
 }
 
 exports.setAssignmentSlackId = async (assignmentId, slackId) => await this.pool.query(
-	`
+  `
 	UPDATE assignment
 	SET slackId = ?
 	WHERE id = ?
 	`, [
-		slackId,
-		assignmentId,
-	]
+    slackId,
+    assignmentId,
+  ],
 )
 
 exports.setAssignmentCommentSlackId = async (assignmentId, id, slackId) => await this.pool.query(
-	`
+  `
 	UPDATE assignmentComment
 	SET slackId = ?
 	WHERE assignment = ? AND id = ?
 	`, [
-		slackId,
-		assignmentId,
-		id,
-	]
+    slackId,
+    assignmentId,
+    id,
+  ],
 )

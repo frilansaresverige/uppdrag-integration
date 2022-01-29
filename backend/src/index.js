@@ -13,19 +13,19 @@ const app = express()
 const httpServer = http.Server(app)
 
 const pool = mysql.createPool({
-	host: config.mysql.host,
-	user: config.mysql.username,
-	password: config.mysql.password,
-	database: config.mysql.database,
-	waitForConnections: true,
-	connectionLimit: 10,
-	queueLimit: 0,
+  host: config.mysql.host,
+  user: config.mysql.username,
+  password: config.mysql.password,
+  database: config.mysql.database,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
 })
 
 app.use(express.json())
 
 app.use(express.urlencoded({
-	extended: true,
+  extended: true,
 }))
 
 app.use(bodyParser.urlencoded({ extended : true }))

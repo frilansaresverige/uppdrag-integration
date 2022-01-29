@@ -36,7 +36,7 @@ router.post('/', async (req, res) => {
     customerName,
     title,
     description,
-    contact
+    contact,
   )
 
   res.status(201).end()

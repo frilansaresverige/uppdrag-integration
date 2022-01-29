@@ -11,24 +11,24 @@ exports.propagateAssignment = async assignmentId => {
 
   const params = new URLSearchParams()
 	
-	params.append('token', config.slack.token)
-	params.append('channel', config.slack.channel)
-	params.append('text', text)
+  params.append('token', config.slack.token)
+  params.append('channel', config.slack.channel)
+  params.append('text', text)
 	
-	let ok, ts
+  let ok, ts
 
-	try {
-		const response = await axios.post('https://slack.com/api/chat.postMessage', params)
+  try {
+    const response = await axios.post('https://slack.com/api/chat.postMessage', params)
 
-		ok = response.data.ok
+    ok = response.data.ok
 
     if (ok) {
       ts = response.data.ts
     }
-	} catch (error) {
+  } catch (error) {
     console.error('Failed to post assignment ' + assignmentId + ' to Slack:')
     console.error(error)
-	}
+  }
 
   if (ok) {
     await model.setAssignmentSlackId(assignment.id, ts)
