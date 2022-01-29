@@ -1,19 +1,26 @@
 <template>
   <h2>Hantera publikation</h2>
-  <p>Du som har länken till publikationen kan på den här sidan lägga till kompletteringar. Tänk därför på att hålla länken hemlig!</p>
 
-  <assignment :assignment="assignment" />
+  <template v-if="error">
+    <p>Den publikation du söker kunde inte hittas.</p>
+  </template>
 
-  <form @submit.prevent="submitComment" v-if="commentState === 'EDITING' || commentState === 'PUBLISHING'">
-    <label>
-      Komplettera publikationen med ny information:
-      <textarea style="height: 150px;" v-model="comment" :disabled="commentState === 'PUBLISHING'"></textarea>
+  <template v-if="assignment !== null">
+    <p>Du som har länken till publikationen kan på den här sidan lägga till kompletteringar. Tänk därför på att hålla länken hemlig!</p>
 
-      <input type="submit" value="Spara komplettering" :disabled="!comment || commentState === 'PUBLISHING'" />
-    </label>
-  </form>
+    <assignment :assignment="assignment" />
 
-  <p v-if="commentState === 'SAVED'"><strong>Tack!</strong> Din komplettering har sparats. <a @click="commentState = 'EDITING'">Skriv en till »</a></p>
+    <form @submit.prevent="submitComment" v-if="commentState === 'EDITING' || commentState === 'PUBLISHING'">
+      <label>
+        Komplettera publikationen med ny information:
+        <textarea style="height: 150px;" v-model="comment" :disabled="commentState === 'PUBLISHING'"></textarea>
+
+        <input type="submit" value="Spara komplettering" :disabled="!comment || commentState === 'PUBLISHING'" />
+      </label>
+    </form>
+
+    <p v-if="commentState === 'SAVED'"><strong>Tack!</strong> Din komplettering har sparats. <a @click="commentState = 'EDITING'">Skriv en till »</a></p>
+  </template>
 </template>
 
 <script>
@@ -31,18 +38,23 @@ export default {
     assignment: null,
     comment: '',
     commentState: 'EDITING',
+    error: false,
   }),
 
   methods: {
     async loadAssignment() {
       this.assignment = null
 
-      this.assignment = {
-        ...(await axios.get('/api/assignments/' + this.$route.params.assignmentId)).data,
-        comments: [],
-      }
+      try {
+        this.assignment = {
+          ...(await axios.get('/api/assignments/' + this.$route.params.assignmentId)).data,
+          comments: [],
+        }
 
-      this.loadAssignmentComments()
+        this.loadAssignmentComments()
+      } catch {
+        this.error = true
+      }
     },
 
     async loadAssignmentComments() {
