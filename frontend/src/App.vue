@@ -41,18 +41,18 @@ p {
 }
 
 a, a:active, a:hover {
-	color: #005FA4;
-	text-decoration: none;
+  color: #005FA4;
+  text-decoration: none;
 }
 
 a:hover {
-	color: #005FA4;
-	text-decoration: underline;
-	cursor: pointer;
+  color: #005FA4;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 a:visited {
-	text-decoration: none;
+  text-decoration: none;
 }
 
 input, textarea {
