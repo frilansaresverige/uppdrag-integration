@@ -118,6 +118,13 @@ export default {
       }
     },
   },
+
+  watch: {
+    state: function() {
+      window.scrollTo(0, 0)
+    },
+  },
+
   computed: {
     somethingIsMissing: function() {
       return !!Object.keys(this.assignment).find(x => !this.assignment[x])
