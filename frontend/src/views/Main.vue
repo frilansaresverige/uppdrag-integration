@@ -40,8 +40,8 @@
 
         <div class="column">
           <label>
-            Uppdragsgivarens namn (t.ex. företagets namn):
-            <input type="text" v-model.trim="assignment.customerName" :maxlength="50" />
+            Uppdragsgivarens namn:
+            <input type="text" v-model.trim="assignment.customerName" :maxlength="50" placeholder="t.ex. företagets namn" />
           </label>
         </div>
       </div>

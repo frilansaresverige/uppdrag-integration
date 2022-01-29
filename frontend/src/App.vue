@@ -101,4 +101,16 @@ input:active, textarea:active, input:focus-visible, textarea:focus-visible {
   padding: 0 10px;
   width: 100%;
 }
+
+@media (max-width: 768px) {
+  .columns {
+    flex-wrap: wrap;
+    margin: 0;
+  }
+
+  .columns > .column {
+    flex-shrink: 0;
+    padding: 0;
+  }
+}
 </style>
