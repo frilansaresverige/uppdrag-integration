@@ -1,5 +1,5 @@
 <template>
-  <h1>Frilansare Sverige</h1>
+  <h1><a href="https://frilansaresverige.se/">Frilansare Sverige</a></h1>
   <router-view />
 </template>
 
