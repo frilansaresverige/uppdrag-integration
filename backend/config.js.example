@@ -49,7 +49,10 @@ module.exports = {
     `,
   },
   slack: {
-    channel: '#...',
+    channels: {
+      'BROKER': '#...',
+      'DIRECT': '#...',
+    },
     token: '',
   },
 }

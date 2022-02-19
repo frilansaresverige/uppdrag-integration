@@ -8,6 +8,7 @@ const model = require('../model')
 const router = express.Router()
 
 router.post('/', async (req, res) => {
+  let senderType = req.body.senderType
   let emailAddress = req.body.emailAddress
   let customerName = req.body.customerName
   let title = req.body.title
@@ -26,12 +27,13 @@ router.post('/', async (req, res) => {
     return
   }
 
-  if (emailAddress.length > 50 || title.length > 50 || title.length > 50) {
+  if (emailAddress.length > 50 || title.length > 50 || title.length > 50 || !['BROKER', 'DIRECT'].includes(senderType)) {
     res.status(400).end()
     return
   }
 
   const assignmentId = await model.saveAssignment(
+    senderType,
     emailAddress,
     customerName,
     title,
@@ -54,6 +56,7 @@ router.get('/:assignmentId', async (req, res) => {
 
   res.json({
     id: assignment.id,
+    senderType: assignment.senderType,
     customerName: assignment.customerName,
     title: assignment.title,
     description: assignment.description,

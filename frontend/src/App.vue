@@ -86,6 +86,19 @@ input[type='submit']:active {
   background-color: #cccccc;
 }
 
+label > input[type='radio'] {
+  display: inline;
+  width: auto;
+}
+
+label.radio {
+  display: block;
+}
+
+label:not(.radio) + label.radio {
+  margin-top: 15px;
+}
+
 input:active, textarea:active, input:focus-visible, textarea:focus-visible {
   outline: none;
   border: 1px solid #444444;

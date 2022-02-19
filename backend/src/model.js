@@ -1,6 +1,7 @@
 'use strict'
 
 const common = require('./common')
+const config = require('../config')
 const slack = require('./slack')
 
 exports.pool = null
@@ -9,32 +10,37 @@ exports.setPool = pool => {
   this.pool = pool
 }
 
-exports.saveAssignment = async (emailAddress, customerName, title, description, contact) => {
+exports.saveAssignment = async (senderType, emailAddress, customerName, title, description, contact) => {
   const id = common.randomString()
   const created = common.getTimestamp()
   const slackId = null
+  const slackChannel = config.slack.channels[senderType]
 
   await this.pool.query(
     `
 		INSERT INTO assignment (
 			id,
+      senderType,
 			emailAddress,
 			customerName,
 			title,
 			description,
 			contact,
 			created,
+      slackChannel,
 			slackId
 		)
-		VALUES(?, ?, ?, ?, ?, ?, ?, ?)
+		VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		`, [
       id,
+      senderType,
       emailAddress,
       customerName,
       title,
       description,
       contact,
       created,
+      slackChannel,
       slackId,
     ],
   )
@@ -49,12 +55,14 @@ exports.getAssignment = async assignmentId => {
     `
 		SELECT
 			id,
+      senderType,
 			emailAddress,
 			customerName,
 			title,
 			description,
 			contact,
 			created,
+      slackChannel,
 			slackId
 		FROM assignment
 		WHERE id = ?
@@ -67,6 +75,18 @@ exports.getAssignment = async assignmentId => {
   }
 
   return assignments[0]
+}
+
+exports.getAssignmentThatNeedSlackPropagation = async () => {
+  const [ids] = await this.pool.query(
+    `
+    SELECT id
+    FROM assignment
+    WHERE slackId IS NULL
+    `,
+  )
+
+  return ids.map(x => x.id)
 }
 
 exports.assignmentExists = async assignmentId => {

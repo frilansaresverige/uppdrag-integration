@@ -6,6 +6,7 @@ const mysql = require('mysql2/promise')
 const bodyParser = require('body-parser')
 
 const model = require('./model')
+const slack = require('./slack')
 const config = require('../config')
 
 const app = express()
@@ -33,5 +34,7 @@ app.use(bodyParser.urlencoded({ extended : true }))
 app.use('/api/assignments', require('./rest/assignments'))
 
 model.setPool(pool)
+
+slack.sync()
 
 httpServer.listen(config.listen.port, config.listen.ip)
