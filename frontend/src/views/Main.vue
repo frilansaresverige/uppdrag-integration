@@ -53,10 +53,28 @@
         <textarea style="height: 300px;" v-model.trim="assignment.description"></textarea>
       </label>
 
-      <label>
-        Kontaktuppgifter till ansvarig person (namn, telefonnummer m.m.):
-        <textarea style="height: 150px;" v-model.trim="assignment.contact"></textarea>
-      </label>
+      <div class="columns">
+        <div class="column">
+          <label>
+            Kontaktuppgifter till ansvarig person (namn, telefonnummer m.m.):
+            <textarea style="height: 150px;" v-model.trim="assignment.contact"></textarea>
+          </label>
+        </div>
+
+        <div class="column">
+          <label>Typ av kontakt:</label>
+
+          <label class="radio">
+            <input type="radio" value="BROKER" v-model="assignment.senderType" />
+            Konsultmäklare eller motsvarande mellanhand
+          </label>
+
+          <label class="radio">
+            <input type="radio" value="DIRECT" v-model="assignment.senderType" />
+            Direktkontakt med slutkund
+          </label>
+        </div>
+      </div>
 
       <input type="submit" value="Fortsätt" :disabled="somethingIsMissing" />
     </form>
@@ -77,6 +95,7 @@ export default {
   data: () => ({
     state: 'CRAFT',
     assignment: {
+      senderType: null,
       title: '',
       description: '',
       customerName: '',

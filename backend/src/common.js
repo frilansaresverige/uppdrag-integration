@@ -36,7 +36,7 @@ exports.validateEmail = emailAddress => {
 
 exports.fillTemplate = (template, source) => {
   let body = template
-	
+
   // ta bort mellanslag och tabbar pga. indentering
   body = body.trim().replace(/\n[ \t]+/g, '\n')
 

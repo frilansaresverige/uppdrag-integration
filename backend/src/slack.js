@@ -4,17 +4,25 @@ const common = require('./common')
 const model = require('./model')
 const config = require('../config')
 
+exports.sync = async () => {
+  const ids = await model.getAssignmentThatNeedSlackPropagation()
+
+  for (const id of ids) {
+    await this.propagateAssignment(id)
+  }
+}
+
 exports.propagateAssignment = async assignmentId => {
   const assignment = await model.getAssignment(assignmentId)
 
   const text = common.fillTemplate(config.templates.slackAssignment, assignment)
 
   const params = new URLSearchParams()
-	
+
   params.append('token', config.slack.token)
-  params.append('channel', config.slack.channel)
+  params.append('channel', assignment.slackChannel)
   params.append('text', text)
-	
+
   let ok, ts
 
   try {
@@ -24,6 +32,8 @@ exports.propagateAssignment = async assignmentId => {
 
     if (ok) {
       ts = response.data.ts
+    } else {
+      throw response.data
     }
   } catch (error) {
     console.error('Failed to post assignment ' + assignmentId + ' to Slack:')
@@ -54,7 +64,7 @@ exports.propagateAssignmentComments = async assignmentId => {
     const params = new URLSearchParams()
     
     params.append('token', config.slack.token)
-    params.append('channel', config.slack.channel)
+    params.append('channel', assignment.slackChannel)
     params.append('thread_ts', assignment.slackId)
     params.append('reply_broadcast', 'true')
     params.append('text', text)
@@ -68,6 +78,8 @@ exports.propagateAssignmentComments = async assignmentId => {
 
       if (ok) {
         ts = response.data.ts
+      } else {
+        throw response.data
       }
     } catch (error) {
       console.error('Failed to post assignment comment (' + assignmentId + ', ' + comment.id + ') to Slack:')

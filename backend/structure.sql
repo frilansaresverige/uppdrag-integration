@@ -3,12 +3,14 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `assignment` (
   `id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `senderType` enum('DIRECT','BROKER') COLLATE utf8mb4_unicode_ci NOT NULL,
   `emailAddress` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `customerName` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `contact` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `created` bigint(30) NOT NULL,
+  `slackChannel` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `slackId` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

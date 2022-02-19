@@ -7,7 +7,7 @@
     <p>{{ assignment.customerName }}</p>
 
     <h4>Kontaktuppgifter</h4>
-    <p>{{ assignment.contact }}</p>
+    <p>{{ assignment.contact }} ({{ niceSenderType(assignment.senderType) }})</p>
 
     <template v-if="assignment.comments">
       <template :key="comment.id" v-for="comment in assignment.comments">
@@ -28,7 +28,16 @@ export default {
   methods: {
     niceTimestamp(timestamp) {
       return format(timestamp * 1000, "'den' PPP 'klockan' p", { locale: sv })
-    }
+    },
+
+    niceSenderType(senderType) {
+      switch (senderType) {
+        case 'BROKER': return 'förmedlare'
+        case 'DIRECT': return 'slutkund'
+
+        default: throw 'unknown senderType ' + senderType
+      }
+    },
   },
 
   props: {

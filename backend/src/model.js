@@ -1,6 +1,7 @@
 'use strict'
 
 const common = require('./common')
+const config = require('../config')
 const slack = require('./slack')
 
 exports.pool = null
@@ -9,32 +10,37 @@ exports.setPool = pool => {
   this.pool = pool
 }
 
-exports.saveAssignment = async (emailAddress, customerName, title, description, contact) => {
+exports.saveAssignment = async (senderType, emailAddress, customerName, title, description, contact) => {
   const id = common.randomString()
   const created = common.getTimestamp()
   const slackId = null
+  const slackChannel = config.slack.channels[senderType]
 
   await this.pool.query(
     `
-		INSERT INTO assignment (
-			id,
-			emailAddress,
-			customerName,
-			title,
-			description,
-			contact,
-			created,
-			slackId
-		)
-		VALUES(?, ?, ?, ?, ?, ?, ?, ?)
-		`, [
+    INSERT INTO assignment (
       id,
+      senderType,
       emailAddress,
       customerName,
       title,
       description,
       contact,
       created,
+      slackChannel,
+      slackId
+    )
+    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `, [
+      id,
+      senderType,
+      emailAddress,
+      customerName,
+      title,
+      description,
+      contact,
+      created,
+      slackChannel,
       slackId,
     ],
   )
@@ -47,18 +53,20 @@ exports.saveAssignment = async (emailAddress, customerName, title, description, 
 exports.getAssignment = async assignmentId => {
   const [assignments] = await this.pool.query(
     `
-		SELECT
-			id,
-			emailAddress,
-			customerName,
-			title,
-			description,
-			contact,
-			created,
-			slackId
-		FROM assignment
-		WHERE id = ?
-		`,
+    SELECT
+      id,
+      senderType,
+      emailAddress,
+      customerName,
+      title,
+      description,
+      contact,
+      created,
+      slackChannel,
+      slackId
+    FROM assignment
+    WHERE id = ?
+    `,
     [assignmentId],
   )
 
@@ -69,13 +77,25 @@ exports.getAssignment = async assignmentId => {
   return assignments[0]
 }
 
+exports.getAssignmentThatNeedSlackPropagation = async () => {
+  const [ids] = await this.pool.query(
+    `
+    SELECT id
+    FROM assignment
+    WHERE slackId IS NULL
+    `,
+  )
+
+  return ids.map(x => x.id)
+}
+
 exports.assignmentExists = async assignmentId => {
   const count = (await this.pool.query(
     `
-		SELECT COUNT(*) AS count
-		FROM assignment
-		WHERE id = ?
-		`,
+    SELECT COUNT(*) AS count
+    FROM assignment
+    WHERE id = ?
+    `,
     [assignmentId],
   ))[0][0].count
 
@@ -85,14 +105,14 @@ exports.assignmentExists = async assignmentId => {
 exports.getAssignmentComments = async assignmentId => {
   const [comments] = await this.pool.query(
     `
-		SELECT
-			id,
-			comment,
-			created,
-			slackId
-		FROM assignmentComment
-		WHERE assignment = ?
-		`,
+    SELECT
+      id,
+      comment,
+      created,
+      slackId
+    FROM assignmentComment
+    WHERE assignment = ?
+    `,
     [assignmentId],
   )
 
@@ -105,19 +125,19 @@ exports.saveAssignmentComment = async (assignmentId, comment) => {
 
   await this.pool.query(
     `
-		INSERT INTO assignmentComment (
-			assignment,
-			id,
-			comment,
-			created,
-			slackId
-		)
-		VALUES(?, (
-			SELECT COUNT(*) + 1
-			FROM assignmentComment AS t
-			WHERE t.assignment = ?
-		), ?, ?, ?)
-		`, [
+    INSERT INTO assignmentComment (
+      assignment,
+      id,
+      comment,
+      created,
+      slackId
+    )
+    VALUES(?, (
+      SELECT COUNT(*) + 1
+      FROM assignmentComment AS t
+      WHERE t.assignment = ?
+    ), ?, ?, ?)
+    `, [
       assignmentId,
       assignmentId,
       comment,
@@ -131,10 +151,10 @@ exports.saveAssignmentComment = async (assignmentId, comment) => {
 
 exports.setAssignmentSlackId = async (assignmentId, slackId) => await this.pool.query(
   `
-	UPDATE assignment
-	SET slackId = ?
-	WHERE id = ?
-	`, [
+  UPDATE assignment
+  SET slackId = ?
+  WHERE id = ?
+  `, [
     slackId,
     assignmentId,
   ],
@@ -142,10 +162,10 @@ exports.setAssignmentSlackId = async (assignmentId, slackId) => await this.pool.
 
 exports.setAssignmentCommentSlackId = async (assignmentId, id, slackId) => await this.pool.query(
   `
-	UPDATE assignmentComment
-	SET slackId = ?
-	WHERE assignment = ? AND id = ?
-	`, [
+  UPDATE assignmentComment
+  SET slackId = ?
+  WHERE assignment = ? AND id = ?
+  `, [
     slackId,
     assignmentId,
     id,
