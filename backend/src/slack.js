@@ -18,11 +18,11 @@ exports.propagateAssignment = async assignmentId => {
   const text = common.fillTemplate(config.templates.slackAssignment, assignment)
 
   const params = new URLSearchParams()
-	
+
   params.append('token', config.slack.token)
   params.append('channel', assignment.slackChannel)
   params.append('text', text)
-	
+
   let ok, ts
 
   try {

@@ -14,6 +14,7 @@ module.exports = {
       'never',
     ],
     'indent': ['error', 2],
+    'no-tabs': 1,
   },
   'parserOptions': {
     'ecmaVersion': 2021,
