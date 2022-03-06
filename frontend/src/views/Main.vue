@@ -62,16 +62,16 @@
         </div>
 
         <div class="column">
-          <label>Typ av kontakt:</label>
+          <label>Jag som tipsar om detta uppdrag:</label>
 
           <label class="radio">
             <input type="radio" value="BROKER" v-model="assignment.senderType" />
-            Konsultmäklare eller motsvarande mellanhand
+            Jag är konsultmäklare eller motsvarande mellanhand
           </label>
 
           <label class="radio">
             <input type="radio" value="DIRECT" v-model="assignment.senderType" />
-            Direktkontakt med slutkund
+            Jag är eller jobbar direkt för slutkunden som har konsultbehovet
           </label>
         </div>
       </div>
