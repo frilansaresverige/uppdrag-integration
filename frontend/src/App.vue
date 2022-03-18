@@ -15,7 +15,10 @@
   margin: 0 auto;
 }
 
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   margin: 0;
   padding: 0;
 }
@@ -30,7 +33,9 @@ h2 {
   margin-top: 20px;
 }
 
-h2, h3, h4 {
+h2,
+h3,
+h4 {
   margin-bottom: 5px;
 }
 
@@ -40,13 +45,15 @@ p {
   margin-bottom: 25px;
 }
 
-a, a:active, a:hover {
-  color: #005FA4;
+a,
+a:active,
+a:hover {
+  color: #005fa4;
   text-decoration: none;
 }
 
 a:hover {
-  color: #005FA4;
+  color: #005fa4;
   text-decoration: underline;
   cursor: pointer;
 }
@@ -55,7 +62,8 @@ a:visited {
   text-decoration: none;
 }
 
-input, textarea {
+input,
+textarea {
   display: block;
   margin: 5px 0 25px;
   width: 100%;
@@ -99,7 +107,10 @@ label:not(.radio) + label.radio {
   margin-top: 15px;
 }
 
-input:active, textarea:active, input:focus-visible, textarea:focus-visible {
+input:active,
+textarea:active,
+input:focus-visible,
+textarea:focus-visible {
   outline: none;
   border: 1px solid #444444;
   color: #222222;

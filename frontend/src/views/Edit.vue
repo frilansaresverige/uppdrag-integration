@@ -10,10 +10,10 @@
 
     <assignment :assignment="assignment" />
 
-    <form @submit.prevent="submitComment" v-if="commentState === 'EDITING' || commentState === 'PUBLISHING'">
+    <form v-if="commentState === 'EDITING' || commentState === 'PUBLISHING'" @submit.prevent="submitComment">
       <label>
         Komplettera publikationen med ny information:
-        <textarea style="height: 150px;" v-model="comment" :disabled="commentState === 'PUBLISHING'"></textarea>
+        <textarea v-model="comment" style="height: 150px" :disabled="commentState === 'PUBLISHING'"></textarea>
 
         <input type="submit" value="Spara komplettering" :disabled="!comment || commentState === 'PUBLISHING'" />
       </label>
@@ -40,6 +40,10 @@ export default {
     commentState: 'EDITING',
     error: false,
   }),
+
+  async created() {
+    await this.loadAssignment()
+  },
 
   methods: {
     async loadAssignment() {
@@ -78,10 +82,6 @@ export default {
         this.commentState = 'EDITING'
       }
     },
-  },
-
-  async created() {
-    await this.loadAssignment()
   },
 }
 </script>

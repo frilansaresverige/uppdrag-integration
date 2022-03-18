@@ -10,7 +10,7 @@
     <p>{{ assignment.contact }} ({{ niceSenderType(assignment.senderType) }})</p>
 
     <template v-if="assignment.comments">
-      <template :key="comment.id" v-for="comment in assignment.comments">
+      <template v-for="comment in assignment.comments" :key="comment.id">
         <h4>Komplettering {{ niceTimestamp(comment.created) }}</h4>
         <p>{{ comment.comment }}</p>
       </template>
@@ -25,6 +25,13 @@ import { sv } from 'date-fns/locale'
 export default {
   name: 'Assignment',
 
+  props: {
+    assignment: {
+      type: Object,
+      default: undefined,
+    },
+  },
+
   methods: {
     niceTimestamp(timestamp) {
       return format(timestamp * 1000, "'den' PPP 'klockan' p", { locale: sv })
@@ -32,17 +39,16 @@ export default {
 
     niceSenderType(senderType) {
       switch (senderType) {
-        case 'BROKER': return 'förmedlare'
-        case 'DIRECT': return 'slutkund'
+        case 'BROKER':
+          return 'förmedlare'
+        case 'DIRECT':
+          return 'slutkund'
 
-        default: throw 'unknown senderType ' + senderType
+        default:
+          throw 'unknown senderType ' + senderType
       }
     },
   },
-
-  props: {
-    assignment: Object,
-  }
 }
 </script>
 
