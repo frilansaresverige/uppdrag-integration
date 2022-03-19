@@ -19,7 +19,7 @@
     <form @submit.prevent="publishAssignment">
       <label>
         Din e-postadress:
-        <input type="text" v-model.trim="emailAddress" :disabled="isPublishing" :maxlength="50" />
+        <input v-model.trim="emailAddress" type="text" :disabled="isPublishing" :maxlength="50" />
       </label>
 
       <input type="submit" value="Publicera" :disabled="!emailAddress || isPublishing" />
@@ -36,28 +36,28 @@
         <div class="column">
           <label>
             Uppdragets titel:
-            <input type="text" v-model.trim="assignment.title" :maxlength="50" />
+            <input v-model.trim="assignment.title" type="text" :maxlength="50" />
           </label>
         </div>
 
         <div class="column">
           <label>
             Uppdragsgivarens namn:
-            <input type="text" v-model.trim="assignment.customerName" :maxlength="50" placeholder="t.ex. företagets namn" />
+            <input v-model.trim="assignment.customerName" type="text" :maxlength="50" placeholder="t.ex. företagets namn" />
           </label>
         </div>
       </div>
 
       <label>
         Beskrivning av uppdraget och uppdragsgivarens behov:
-        <textarea style="height: 300px;" v-model.trim="assignment.description"></textarea>
+        <textarea v-model.trim="assignment.description" style="height: 300px"></textarea>
       </label>
 
       <div class="columns">
         <div class="column">
           <label>
             Kontaktuppgifter till ansvarig person (namn, telefonnummer m.m.):
-            <textarea style="height: 150px;" v-model.trim="assignment.contact"></textarea>
+            <textarea v-model.trim="assignment.contact" style="height: 150px"></textarea>
           </label>
         </div>
 
@@ -65,12 +65,12 @@
           <label>Jag som tipsar om detta uppdrag:</label>
 
           <label class="radio">
-            <input type="radio" value="BROKER" v-model="assignment.senderType" />
+            <input v-model="assignment.senderType" type="radio" value="BROKER" />
             Jag är konsultmäklare eller motsvarande mellanhand
           </label>
 
           <label class="radio">
-            <input type="radio" value="DIRECT" v-model="assignment.senderType" />
+            <input v-model="assignment.senderType" type="radio" value="DIRECT" />
             Jag är eller jobbar direkt för slutkunden som har konsultbehovet
           </label>
         </div>
@@ -105,6 +105,18 @@ export default {
     isPublishing: false,
   }),
 
+  computed: {
+    somethingIsMissing: function () {
+      return !!Object.keys(this.assignment).find(x => !this.assignment[x])
+    },
+  },
+
+  watch: {
+    state: function () {
+      window.scrollTo(0, 0)
+    },
+  },
+
   methods: {
     goToPreview() {
       this.state = 'PREVIEW'
@@ -137,18 +149,6 @@ export default {
       } finally {
         this.isPublishing = false
       }
-    },
-  },
-
-  watch: {
-    state: function() {
-      window.scrollTo(0, 0)
-    },
-  },
-
-  computed: {
-    somethingIsMissing: function() {
-      return !!Object.keys(this.assignment).find(x => !this.assignment[x])
     },
   },
 }
