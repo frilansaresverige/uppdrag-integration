@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@babel/eslint-parser": "^7.19.1",
     "axios": "^0.25.0",
     "core-js": "^3.6.5",
     "date-fns": "^2.28.0",
@@ -15,16 +16,15 @@
     "vue-router": "^4.0.12"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
+    "@vue/cli-plugin-babel": "^5.0.8",
+    "@vue/cli-plugin-eslint": "^5.0.8",
+    "@vue/cli-service": "^5.0.8",
     "@vue/compiler-sfc": "^3.0.0",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^7.6.0",
+    "eslint": "^8.20.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^3.4.1",
     "eslint-plugin-prettier-vue": "^3.1.0",
-    "eslint-plugin-vue": "^7.0.0",
+    "eslint-plugin-vue": "^7.17.0",
     "prettier": "^2.6.0"
   },
   "eslintConfig": {
@@ -38,7 +38,7 @@
       "prettier"
     ],
     "parserOptions": {
-      "parser": "babel-eslint"
+      "parser": "@babel/eslint-parser"
     },
     "rules": {}
   },
