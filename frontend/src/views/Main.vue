@@ -62,16 +62,16 @@
         </div>
 
         <div class="column">
-          <label>Jag som tipsar om detta uppdrag:</label>
+          <label>Hur kommer frilansarens relation med kunden se ut?</label>
 
           <label class="radio">
             <input v-model="assignment.senderType" type="radio" value="BROKER" />
-            Jag är konsultmäklare eller motsvarande mellanhand
+            Uppdraget innebär avtal med en förmedlare, som i sin tur har avtal med kunden
           </label>
 
           <label class="radio">
             <input v-model="assignment.senderType" type="radio" value="DIRECT" />
-            Jag är eller jobbar direkt för slutkunden som har konsultbehovet
+            Den vi söker kommer ha direktavtal med kunden
           </label>
         </div>
       </div>
