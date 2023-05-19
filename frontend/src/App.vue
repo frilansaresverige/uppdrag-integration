@@ -136,5 +136,13 @@ textarea:focus-visible {
     flex-shrink: 0;
     padding: 0;
   }
+
+  label.radio {
+    margin-bottom: 15px;
+  }
+
+  label.radio input {
+    margin-bottom: 10px;
+  }
 }
 </style>
