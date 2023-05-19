@@ -101,6 +101,11 @@ label > input[type='radio'] {
 
 label.radio {
   display: block;
+  margin-bottom: 15px;
+}
+
+label.radio input {
+  margin-bottom: 10px;
 }
 
 label:not(.radio) + label.radio {
@@ -135,14 +140,6 @@ textarea:focus-visible {
   .columns > .column {
     flex-shrink: 0;
     padding: 0;
-  }
-
-  label.radio {
-    margin-bottom: 15px;
-  }
-
-  label.radio input {
-    margin-bottom: 10px;
   }
 }
 </style>
