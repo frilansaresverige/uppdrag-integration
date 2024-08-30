@@ -50,7 +50,8 @@
 
       <label>
         Beskrivning av uppdraget och uppdragsgivarens behov:
-        <textarea v-model.trim="assignment.description" style="height: 300px"></textarea>
+        <textarea v-model.trim="assignment.description" style="height: 300px" maxlength="500"></textarea>
+        <div v-if="assignment.description.length > 450" :class="{ lengthWarning: true, lengthError: assignment.description.length > 495 }">Du har använt {{ assignment.description.length }} av 500 tecken.</div>
       </label>
 
       <div class="columns">
@@ -153,3 +154,15 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.lengthWarning {
+  margin: -20px 0 20px;
+  color: #f28c28;
+  font-weight: 700;
+}
+
+.lengthError {
+  color: red;
+}
+</style>
