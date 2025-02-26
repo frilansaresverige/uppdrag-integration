@@ -32,16 +32,17 @@ module.exports = {
 
       Hälsningar från Frilansare Sverige
     `,
-    slackAssignment: `
+    slackAssignmentInitial: `
     *[[TITLE]]*
 
     *Uppdragsgivare:* [[CUSTOMER_NAME]]
     
-    *Beskrivning:*
-    [[DESCRIPTION]]
-    
     *Kontaktuppgifter:*
     [[CONTACT]]
+    `,
+    slackAssignmentThread: `
+    *Beskrivning:*
+    [[DESCRIPTION]]
     `,
     slackAssignmentComment: `
     *Komplettering*:
