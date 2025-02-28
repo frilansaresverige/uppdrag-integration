@@ -36,6 +36,12 @@ module.exports = {
     *[[TITLE]]*
 
     *Uppdragsgivare:* [[CUSTOMER_NAME]]
+
+    *Avsändare:* [[SENDER_EMAIL]]
+
+    *Mellanhandsavgift:* [[CUSTOMER_FEE]] 
+
+    *Minimum arvode:* [[HOURLY_RATE]] kr/h
     
     *Kontaktuppgifter:*
     [[CONTACT]]
@@ -43,6 +49,8 @@ module.exports = {
     slackAssignmentThread: `
     *Beskrivning:*
     [[DESCRIPTION]]
+
+    *Länk till Allabolag:* [[CUSTOMER_COMPANY_URL]]
     `,
     slackAssignmentComment: `
     *Komplettering*:
