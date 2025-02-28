@@ -14,8 +14,12 @@ router.post('/', async (req, res) => {
   let title = req.body.title
   let description = req.body.description
   let contact = req.body.contact
+  let customerFee = req.body.customerFee
+  let customerCompanyURL = req.body.customerCompanyURL
+  let clientHourlyRate = req.body.clientHourlyRate
+  let location = req.body.location
 
-  if (typeof customerName !== 'string' || typeof title !== 'string' || typeof description !== 'string' || typeof contact !== 'string') {
+  if (typeof customerName !== 'string' || typeof title !== 'string' || typeof description !== 'string' || typeof contact !== 'string' || typeof contact !== 'string') {
     res.status(400).end()
     return
   }
@@ -39,11 +43,15 @@ router.post('/', async (req, res) => {
     title,
     description,
     contact,
+    customerFee,
+    customerCompanyURL,
+    clientHourlyRate,
+    location,
   )
 
   res.status(201).end()
 
-  common.sendConfirmationEmail(assignmentId)
+  // common.sendConfirmationEmail(assignmentId)
 })
 
 router.get('/:assignmentId', async (req, res) => {

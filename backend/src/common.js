@@ -46,6 +46,30 @@ exports.fillTemplate = (template, source) => {
   body = body.replace(/\[\[CONTACT\]\]/g, source.contact)
   body = body.replace(/\[\[URL\]\]/g, config.hostname + '/assignments/' + source.id)
   body = body.replace(/\[\[COMMENT\]\]/g, source.comment)
+  body = body.replace(/\[\[SENDER_EMAIL\]\]/g, source.emailAddress)
+  body = body.replace(/\[\[LOCATION\]\]/g, source.location)
+
+
+  if(source.customerCompanyURL) {
+    body = body.replace(/\[\[CUSTOMER_COMPANY_URL\]\]/g, source.customerCompanyURL)
+  } else {
+    body = body.replace(/^.*\[\[CUSTOMER_COMPANY_URL\]\].*\n?/gm, '')
+  }
+
+  if(source.clientHourlyRate){
+    body = body.replace(/\[\[HOURLY_RATE\]\]/g, source.clientHourlyRate)
+  } else {
+    body = body.replace(/^.*\[\[HOURLY_RATE\]\].*\r?\n.*\r?\n?/gm, '')
+  }
+
+  if(source.customerFee){
+    body = body.replace(/\[\[CUSTOMER_FEE\]\]/g, source.customerFee)
+  } else {
+    if(source.senderType === 'DIRECT'){
+      body = body.replace(/^.*\[\[CUSTOMER_FEE\]\].*\r?\n.*\r?\n?/gm, '')
+    }
+    body = body.replace(/\[\[CUSTOMER_FEE\]\]/g, 'Vill ej uppge')
+  }
 
   return body
 }
