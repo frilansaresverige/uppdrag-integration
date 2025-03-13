@@ -1,6 +1,6 @@
 <template>
   <h2>Information om den här tjänsten</h2>
-  <p>Med hjälp av formuläret kan du publicera aktuella it-konsultuppdrag. De uppdrag som publiceras når en svensk gemenskapen där över tusen frilansare och egenkonsulter inom it-branschen är medlemmar.</p>
+  <p>Med hjälp av formuläret kan du publicera aktuella it-konsultuppdrag. De uppdrag som publiceras når en svensk gemenskap där över tusen frilansare och egenkonsulter inom it-branschen är medlemmar.</p>
 
   <p>Eftersom gemenskapen är exklusiv för frilansare och egenkonsulter är det här formuläret vägen in om du vill nå ut med något till den. Se till att lämna dina kontaktuppgifter när du publicerar ett uppdrag, så att de medlemmar som är intresserade kan nå dig eller företaget du företräder.</p>
 
