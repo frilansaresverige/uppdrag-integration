@@ -14,8 +14,9 @@ router.post('/', async (req, res) => {
   let title = req.body.title
   let description = req.body.description
   let contact = req.body.contact
+  let location = req.body.location
 
-  if (typeof customerName !== 'string' || typeof title !== 'string' || typeof description !== 'string' || typeof contact !== 'string') {
+  if (typeof customerName !== 'string' || typeof title !== 'string' || typeof description !== 'string' || typeof contact !== 'string' || typeof location !== 'string') {
     res.status(400).end()
     return
   }
@@ -39,6 +40,7 @@ router.post('/', async (req, res) => {
     title,
     description,
     contact,
+    location
   )
 
   res.status(201).end()

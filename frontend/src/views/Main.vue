@@ -46,6 +46,14 @@
             <input v-model.trim="assignment.customerName" type="text" :maxlength="50" placeholder="t.ex. företagets namn" />
           </label>
         </div>
+
+        <div class="column">
+          <label>
+            Plats:
+            <input v-model.trim="assignment.location" type="text" :maxlength="50" placeholder="t.ex. Remote / Göteborg / Hybrid Stockholm (2dgr/v)" />
+          </label>
+        </div>
+
       </div>
 
       <label>
@@ -99,6 +107,7 @@ export default {
       title: '',
       description: '',
       customerName: '',
+      location: '',
     },
     emailAddress: '',
     previewMode: false,

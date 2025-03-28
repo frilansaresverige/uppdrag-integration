@@ -10,7 +10,7 @@ exports.setPool = pool => {
   this.pool = pool
 }
 
-exports.saveAssignment = async (senderType, emailAddress, customerName, title, description, contact) => {
+exports.saveAssignment = async (senderType, emailAddress, customerName, title, description, contact, location) => {
   const id = common.randomString()
   const created = common.getTimestamp()
   const slackId = null
@@ -28,9 +28,10 @@ exports.saveAssignment = async (senderType, emailAddress, customerName, title, d
       contact,
       created,
       slackChannel,
-      slackId
+      slackId,
+      location
     )
-    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
       id,
       senderType,
@@ -42,6 +43,7 @@ exports.saveAssignment = async (senderType, emailAddress, customerName, title, d
       created,
       slackChannel,
       slackId,
+      location,
     ],
   )
 
@@ -63,7 +65,8 @@ exports.getAssignment = async assignmentId => {
       contact,
       created,
       slackChannel,
-      slackId
+      slackId,
+      location
     FROM assignment
     WHERE id = ?
     `,

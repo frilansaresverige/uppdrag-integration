@@ -46,6 +46,7 @@ exports.fillTemplate = (template, source) => {
   body = body.replace(/\[\[CONTACT\]\]/g, source.contact)
   body = body.replace(/\[\[URL\]\]/g, config.hostname + '/assignments/' + source.id)
   body = body.replace(/\[\[COMMENT\]\]/g, source.comment)
+  body = body.replace(/\[\[LOCATION\]\]/g, source.location)
 
   return body
 }
