@@ -15,11 +15,11 @@ router.post('/', async (req, res) => {
   let description = req.body.description
   let contact = req.body.contact
   let customerFee = req.body.customerFee
-  let customerCompanyURL = req.body.customerCompanyURL
+  let customerOrganizationNumber = req.body.customerOrganizationNumber
   let clientHourlyRate = req.body.clientHourlyRate
   let location = req.body.location
 
-  if (typeof customerName !== 'string' || typeof title !== 'string' || typeof description !== 'string' || typeof contact !== 'string' || typeof contact !== 'string') {
+  if (typeof customerName !== 'string' || typeof title !== 'string' || typeof description !== 'string' || typeof contact !== 'string' || (customerFee !== null && typeof customerFee !== 'string') || typeof customerOrganizationNumber !== 'string' || typeof location !== 'string' || (clientHourlyRate !== null && typeof clientHourlyRate !== 'number'))  {
     res.status(400).end()
     return
   }
@@ -31,7 +31,7 @@ router.post('/', async (req, res) => {
     return
   }
 
-  if (emailAddress.length > 50 || title.length > 50 || title.length > 50 || !['BROKER', 'DIRECT'].includes(senderType)) {
+  if (emailAddress.length > 50 || title.length > 50 || title.length > 50 || customerOrganizationNumber.length > 15 || !['BROKER', 'DIRECT'].includes(senderType)) {
     res.status(400).end()
     return
   }
@@ -44,14 +44,14 @@ router.post('/', async (req, res) => {
     description,
     contact,
     customerFee,
-    customerCompanyURL,
+    customerOrganizationNumber,
     clientHourlyRate,
     location,
   )
 
   res.status(201).end()
 
-  // common.sendConfirmationEmail(assignmentId)
+  common.sendConfirmationEmail(assignmentId)
 })
 
 router.get('/:assignmentId', async (req, res) => {

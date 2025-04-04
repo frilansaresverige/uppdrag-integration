@@ -52,7 +52,7 @@ module.exports = {
     *Beskrivning:*
     [[DESCRIPTION]]
 
-    *Länk till Allabolag:* [[CUSTOMER_COMPANY_URL]]
+    *Om uppdragsgivaren:* [[CUSTOMER_COMPANY_URL]]
     `,
     slackAssignmentComment: `
     *Komplettering*:

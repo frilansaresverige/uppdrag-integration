@@ -34,7 +34,7 @@ ALTER TABLE `assignmentComment`
   ADD CONSTRAINT `assignmentComment_ibfk_1` FOREIGN KEY (`assignment`) REFERENCES `assignment` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `assignment`
-  ADD COLUMN `customerCompanyURL` TEXT COLLATE utf8mb4_unicode_ci AFTER `customerName`,
-  ADD COLUMN `customerFee` VARCHAR(50) DEFAULT NULL AFTER `customerCompanyURL`,
-  ADD COLUMN `clientHourlyRate` VARCHAR(20) DEFAULT NULL AFTER `customerFee`;
+  ADD COLUMN `customerOrganizationNumber` varchar(15) COLLATE utf8mb4_unicode_ci AFTER `customerName`,
+  ADD COLUMN `customerFee` varchar(50) DEFAULT NULL AFTER `customerOrganizationNumber`,
+  ADD COLUMN `clientHourlyRate` varchar(20) DEFAULT NULL AFTER `customerFee`;
   ADD COLUMN `location` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL;

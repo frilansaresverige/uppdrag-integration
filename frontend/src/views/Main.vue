@@ -57,8 +57,8 @@
 
         <div v-if="assignment.senderType === 'BROKER'" class="column">
           <label>
-            Vårt bolags sida på allabolag.se:
-            <input v-model.trim="assignment.customerCompanyURL" type="url" :maxlength="300" placeholder="https://allabolag.se/..." />
+            Uppdragsgivarens organisationsnummer:
+            <input v-model.trim="assignment.customerOrganizationNumber" type="text" :maxlength="15" placeholder="123456-7890" />
           </label>
         </div>
       </div>
@@ -139,7 +139,7 @@ export default {
       title: '',
       description: '',
       customerName: '',
-      customerCompanyURL: null,
+      customerOrganizationNumber: '',
       customerFee: null,
       isNonTransparentFee: false,
       clientHourlyRate: null,
@@ -157,6 +157,10 @@ export default {
       const brokerFeeFilled = this.assignment.senderType !== 'BROKER' || this.assignment.isNonTransparentFee || !!this.assignment.customerFee
 
       return !requiredFieldsFilled || !brokerFeeFilled
+    },
+    normalizedHourlyRate() {
+      const rate = this.assignment.clientHourlyRate
+      return rate === '' || isNaN(rate) ? null : Number(rate)
     },
   },
 
@@ -186,6 +190,7 @@ export default {
       try {
         await axios.post('/api/assignments', {
           ...this.assignment,
+          clientHourlyRate: this.normalizedHourlyRate,
           emailAddress: this.emailAddress,
         })
 

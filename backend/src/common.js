@@ -19,6 +19,12 @@ exports.randomString = (length = 16) => {
 
 exports.getTimestamp = () => Math.round(Date.now() / 1000)
 
+exports.parseOrganizationNumber = (organizationNumber) => {
+  const stripped = organizationNumber.replace(/[^A-Za-z0-9]/g, '')
+
+  return stripped
+}
+
 // https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
 exports.validateEmail = emailAddress => {
   if (typeof emailAddress !== 'string') {
@@ -50,22 +56,22 @@ exports.fillTemplate = (template, source) => {
   body = body.replace(/\[\[LOCATION\]\]/g, source.location)
 
 
-  if(source.customerCompanyURL) {
-    body = body.replace(/\[\[CUSTOMER_COMPANY_URL\]\]/g, source.customerCompanyURL)
+  if (source.customerOrganizationNumber) {
+    body = body.replace(/\[\[CUSTOMER_COMPANY_URL\]\]/g, this.createCompanyURL(source.customerOrganizationNumber))
   } else {
     body = body.replace(/^.*\[\[CUSTOMER_COMPANY_URL\]\].*\n?/gm, '')
   }
 
-  if(source.clientHourlyRate){
+  if (source.clientHourlyRate) {
     body = body.replace(/\[\[HOURLY_RATE\]\]/g, source.clientHourlyRate)
   } else {
     body = body.replace(/^.*\[\[HOURLY_RATE\]\].*\r?\n.*\r?\n?/gm, '')
   }
 
-  if(source.customerFee){
+  if (source.customerFee) {
     body = body.replace(/\[\[CUSTOMER_FEE\]\]/g, source.customerFee)
   } else {
-    if(source.senderType === 'DIRECT'){
+    if(source.senderType === 'DIRECT') {
       body = body.replace(/^.*\[\[CUSTOMER_FEE\]\].*\r?\n.*\r?\n?/gm, '')
     }
     body = body.replace(/\[\[CUSTOMER_FEE\]\]/g, 'Vill ej uppge')
@@ -108,4 +114,11 @@ exports.sendEmail = async (to, subject, text) => {
   }
 
   return transporter.sendMail(options)
+}
+
+exports.createCompanyURL = (organizationNumber) => {
+  const parsedOrganizationNumber = this.parseOrganizationNumber(organizationNumber)
+  const url = `https://www.allabolag.se/bransch-s%C3%B6k?q=${parsedOrganizationNumber}`
+
+  return url
 }
