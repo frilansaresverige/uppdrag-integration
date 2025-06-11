@@ -171,3 +171,15 @@ exports.setAssignmentCommentSlackId = async (assignmentId, id, slackId) => await
     id,
   ],
 )
+
+exports.getDatabaseHealth = async() => {
+  const oneAssignmentId = (await this.pool.query(
+    `
+    SELECT id
+    FROM assignment
+    LIMIT 1
+    `
+  ))[0]
+
+  return oneAssignmentId.length <= 1
+}
