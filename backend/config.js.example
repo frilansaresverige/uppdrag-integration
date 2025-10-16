@@ -35,7 +35,15 @@ module.exports = {
     slackAssignmentInitial: `
     *[[TITLE]]*
 
+    *Plats:* [[LOCATION]]
+
     *Uppdragsgivare:* [[CUSTOMER_NAME]]
+
+    *Avsändare:* [[SENDER_EMAIL]]
+
+    *Mellanhandsavgift:* [[CUSTOMER_FEE]] 
+
+    *Minimum arvode:* [[HOURLY_RATE]] kr/h
     
     *Kontaktuppgifter:*
     [[CONTACT]]
@@ -43,6 +51,8 @@ module.exports = {
     slackAssignmentThread: `
     *Beskrivning:*
     [[DESCRIPTION]]
+
+    *Om uppdragsgivaren:* [[CUSTOMER_COMPANY_URL]]
     `,
     slackAssignmentComment: `
     *Komplettering*:
