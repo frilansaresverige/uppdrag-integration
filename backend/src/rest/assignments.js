@@ -14,8 +14,12 @@ router.post('/', async (req, res) => {
   let title = req.body.title
   let description = req.body.description
   let contact = req.body.contact
+  let customerFee = req.body.customerFee
+  let customerOrganizationNumber = req.body.customerOrganizationNumber
+  let clientHourlyRate = req.body.clientHourlyRate
+  let location = req.body.location
 
-  if (typeof customerName !== 'string' || typeof title !== 'string' || typeof description !== 'string' || typeof contact !== 'string') {
+  if (typeof customerName !== 'string' || typeof title !== 'string' || typeof description !== 'string' || typeof contact !== 'string' || (customerFee !== null && typeof customerFee !== 'string') || typeof customerOrganizationNumber !== 'string' || typeof location !== 'string' || (clientHourlyRate !== null && typeof clientHourlyRate !== 'number'))  {
     res.status(400).end()
     return
   }
@@ -27,7 +31,7 @@ router.post('/', async (req, res) => {
     return
   }
 
-  if (emailAddress.length > 50 || title.length > 50 || title.length > 50 || !['BROKER', 'DIRECT'].includes(senderType)) {
+  if (emailAddress.length > 50 || title.length > 50 || title.length > 50 || customerOrganizationNumber.length > 15 || !['BROKER', 'DIRECT'].includes(senderType)) {
     res.status(400).end()
     return
   }
@@ -39,6 +43,10 @@ router.post('/', async (req, res) => {
     title,
     description,
     contact,
+    customerFee,
+    customerOrganizationNumber,
+    clientHourlyRate,
+    location,
   )
 
   res.status(201).end()
