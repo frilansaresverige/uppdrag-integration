@@ -33,6 +33,8 @@ app.use(bodyParser.urlencoded({ extended : true }))
 
 app.use('/api/assignments', require('./rest/assignments'))
 
+app.use('/api/health', require('./rest/health'))
+
 model.setPool(pool)
 
 slack.sync()
