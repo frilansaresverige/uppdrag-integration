@@ -142,8 +142,6 @@ exports.getUsers = async () => {
 
 exports.refreshMemberCount = async () => {
   try {
-    console.log('Refreshing member count cache...')
-
     const response = await axios.get('https://slack.com/api/conversations.info', {
       headers: {
         Authorization: `Bearer ${config.slack.token}`,
@@ -160,7 +158,6 @@ exports.refreshMemberCount = async () => {
     }
 
     memberCountCache = response.data.channel.num_members
-    console.log('Member count cache refreshed:', memberCountCache)
   } catch (error) {
     console.error('Error refreshing member count cache:', error.message)
   }
