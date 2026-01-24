@@ -13,7 +13,7 @@ router.get('/', (req, res) => {
     return res.status(503).end()
   }
 
-  res.json(cached)
+  res.type('text/plain').send(String(cached))
 })
 
 module.exports = router

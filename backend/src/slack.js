@@ -6,6 +6,7 @@ const config = require('../config')
 
 let memberCountCache = null
 const REFRESH_INTERVAL_MS = 60 * 60 * 1000
+const MEMBER_COUNT_CHANNEL = process.env.SLACK_MEMBER_COUNT_CHANNEL || 'C8P11NBEF'
 
 exports.sync = async () => {
   const ids = await model.getAssignmentThatNeedSlackPropagation()
@@ -142,21 +143,23 @@ exports.getUsers = async () => {
 exports.refreshMemberCount = async () => {
   try {
     console.log('Refreshing member count cache...')
-    const users = await exports.getUsers()
 
-    if (users === null) {
-      console.error('Failed to refresh member count cache')
+    const response = await axios.get('https://slack.com/api/conversations.info', {
+      headers: {
+        Authorization: `Bearer ${config.slack.token}`,
+      },
+      params: {
+        channel: MEMBER_COUNT_CHANNEL,
+        include_num_members: true,
+      },
+    })
+
+    if (!response.data.ok) {
+      console.error('Failed to refresh member count cache:', response.data)
       return
     }
 
-    const activeHumanUsers = users.filter((u) => !u.deleted && !u.is_bot)
-
-    memberCountCache = {
-      totalUsers: users.length,
-      activeHumanUsers: activeHumanUsers.length,
-      lastUpdated: new Date().toISOString(),
-    }
-
+    memberCountCache = response.data.channel.num_members
     console.log('Member count cache refreshed:', memberCountCache)
   } catch (error) {
     console.error('Error refreshing member count cache:', error.message)
