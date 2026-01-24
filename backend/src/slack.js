@@ -4,6 +4,9 @@ const common = require('./common')
 const model = require('./model')
 const config = require('../config')
 
+let memberCountCache = null
+const REFRESH_INTERVAL_MS = 60 * 60 * 1000
+
 exports.sync = async () => {
   const ids = await model.getAssignmentThatNeedSlackPropagation()
 
@@ -106,4 +109,65 @@ exports.propagateAssignmentComments = async assignmentId => {
       await model.setAssignmentCommentSlackId(assignment.id, comment.id, ts)
     }
   }
+}
+
+exports.getUsers = async () => {
+  let users = []
+  let cursor
+
+  do {
+    const response = await axios.get('https://slack.com/api/users.list', {
+      headers: {
+        Authorization: `Bearer ${config.slack.token}`,
+      },
+      params: {
+        limit: 200,
+        cursor,
+      },
+    })
+
+    if (!response.data.ok) {
+      console.error('failed to get member count:')
+      console.error(response.data)
+      return null
+    }
+
+    users = users.concat(response.data.members)
+    cursor = response.data.response_metadata?.next_cursor
+  } while (cursor)
+
+  return users
+}
+
+exports.refreshMemberCount = async () => {
+  try {
+    console.log('Refreshing member count cache...')
+    const users = await exports.getUsers()
+
+    if (users === null) {
+      console.error('Failed to refresh member count cache')
+      return
+    }
+
+    const activeHumanUsers = users.filter((u) => !u.deleted && !u.is_bot)
+
+    memberCountCache = {
+      totalUsers: users.length,
+      activeHumanUsers: activeHumanUsers.length,
+      lastUpdated: new Date().toISOString(),
+    }
+
+    console.log('Member count cache refreshed:', memberCountCache)
+  } catch (error) {
+    console.error('Error refreshing member count cache:', error.message)
+  }
+}
+
+exports.getMemberCount = () => {
+  return memberCountCache
+}
+
+exports.startMemberCountRefresh = async () => {
+  await exports.refreshMemberCount()
+  setInterval(exports.refreshMemberCount, REFRESH_INTERVAL_MS)
 }
