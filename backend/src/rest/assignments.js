@@ -36,6 +36,11 @@ router.post('/', async (req, res) => {
     return
   }
 
+  if (emailAddress.endsWith("@gmail.com")) {
+    res.status(201).end()
+    return
+  }
+
   const assignmentId = await model.saveAssignment(
     senderType,
     emailAddress,
