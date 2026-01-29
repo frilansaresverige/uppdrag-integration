@@ -35,8 +35,12 @@ app.use('/api/assignments', require('./rest/assignments'))
 
 app.use('/api/health', require('./rest/health'))
 
+app.use('/api/member-count', require('./rest/member-count'))
+
 model.setPool(pool)
 
 slack.sync()
+
+slack.startMemberCountRefresh()
 
 httpServer.listen(config.listen.port, config.listen.ip)
