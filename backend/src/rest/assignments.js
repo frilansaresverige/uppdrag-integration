@@ -36,7 +36,7 @@ router.post('/', async (req, res) => {
     return
   }
 
-  if (emailAddress.endsWith("@gmail.com")) {
+  if (emailAddress.endsWith("@gmail.com") || emailAddress.endsWith("@partna.se")) {
     res.status(201).end()
     return
   }
