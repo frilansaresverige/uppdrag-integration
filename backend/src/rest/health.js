@@ -2,11 +2,12 @@
 
 const express = require('express')
 
+const common = require('../common')
 const model = require('../model')
 
 const router = express.Router()
 
-router.get('/', async (req, res) => {
+router.get('/', common.asyncHandler(async (req, res) => {
   const databaseHealth = await model.getDatabaseHealth()
 
   if (!databaseHealth) {
@@ -15,6 +16,6 @@ router.get('/', async (req, res) => {
   }
 
   res.status(200).end()
-})
+}))
 
 module.exports = router

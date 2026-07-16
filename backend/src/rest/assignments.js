@@ -7,7 +7,7 @@ const model = require('../model')
 
 const router = express.Router()
 
-router.post('/', async (req, res) => {
+router.post('/', common.asyncHandler(async (req, res) => {
   let senderType = req.body.senderType
   let emailAddress = req.body.emailAddress
   let customerName = req.body.customerName
@@ -56,10 +56,13 @@ router.post('/', async (req, res) => {
 
   res.status(201).end()
 
-  common.sendConfirmationEmail(assignmentId)
-})
+  common.sendConfirmationEmail(assignmentId).catch(error => {
+    console.error('Failed to send confirmation email for assignment ' + assignmentId + ':')
+    console.error(error)
+  })
+}))
 
-router.get('/:assignmentId', async (req, res) => {
+router.get('/:assignmentId', common.asyncHandler(async (req, res) => {
   const assignment = await model.getAssignment(req.params.assignmentId)
 
   if (assignment === null) {
@@ -75,9 +78,9 @@ router.get('/:assignmentId', async (req, res) => {
     description: assignment.description,
     contact: assignment.contact,
   })
-})
+}))
 
-router.get('/:assignmentId/comments', async (req, res) => {
+router.get('/:assignmentId/comments', common.asyncHandler(async (req, res) => {
   if (!await model.assignmentExists(req.params.assignmentId)) {
     res.status(404).end()
     return
@@ -88,9 +91,9 @@ router.get('/:assignmentId/comments', async (req, res) => {
     comment: comment.comment,
     created: comment.created,
   })))
-})
+}))
 
-router.post('/:assignmentId/comments', async (req, res) => {
+router.post('/:assignmentId/comments', common.asyncHandler(async (req, res) => {
   if (!await model.assignmentExists(req.params.assignmentId)) {
     res.status(404).end()
     return
@@ -99,13 +102,13 @@ router.post('/:assignmentId/comments', async (req, res) => {
   const comment = req.body.comment
 
   if (typeof comment !== 'string') {
-    req.status(400).end()
+    res.status(400).end()
     return
   }
 
   await model.saveAssignmentComment(req.params.assignmentId, comment)
 
   res.status(201).end()
-})
+}))
 
 module.exports = router

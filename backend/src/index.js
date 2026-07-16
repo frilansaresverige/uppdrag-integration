@@ -37,9 +37,21 @@ app.use('/api/health', require('./rest/health'))
 
 app.use('/api/member-count', require('./rest/member-count'))
 
+app.use((error, req, res, next) => {
+  console.error('Unhandled error while handling ' + req.method + ' ' + req.originalUrl + ':')
+  console.error(error)
+
+  if (!res.headersSent) {
+    res.status(500).end()
+  }
+})
+
 model.setPool(pool)
 
-slack.sync()
+slack.sync().catch(error => {
+  console.error('Failed to sync assignments to Slack on startup:')
+  console.error(error)
+})
 
 slack.startMemberCountRefresh()
 

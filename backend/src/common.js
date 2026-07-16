@@ -19,6 +19,11 @@ exports.randomString = (length = 16) => {
 
 exports.getTimestamp = () => Math.round(Date.now() / 1000)
 
+// Express 4 does not forward rejected promises from async route handlers to the
+// error middleware, so an unhandled rejection would crash the process. Wrapping
+// a handler with this forwards any rejection to next() instead.
+exports.asyncHandler = handler => (req, res, next) => Promise.resolve(handler(req, res, next)).catch(next)
+
 exports.parseOrganizationNumber = (organizationNumber) => {
   const stripped = organizationNumber.replace(/[^A-Za-z0-9]/g, '')
 
@@ -83,11 +88,16 @@ exports.fillTemplate = (template, source) => {
 exports.sendConfirmationEmail = async assignmentId => {
   const assignment = await model.getAssignment(assignmentId)
 
-  this.sendEmail(
-    assignment.emailAddress,
-    'Bekräftelse på publicerat konsultuppdrag',
-    this.fillTemplate(config.templates.confirmation, assignment),
-  )
+  try {
+    await this.sendEmail(
+      assignment.emailAddress,
+      'Bekräftelse på publicerat konsultuppdrag',
+      this.fillTemplate(config.templates.confirmation, assignment),
+    )
+  } catch (error) {
+    console.error('Failed to send confirmation email for assignment ' + assignmentId + ':')
+    console.error(error)
+  }
 }
 
 exports.sendEmail = async (to, subject, text) => {
