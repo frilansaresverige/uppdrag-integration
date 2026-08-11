@@ -14,6 +14,10 @@ exports.sync = async () => {
   for (const id of ids) {
     await this.propagateAssignment(id)
   }
+
+  for (const id of await model.getAssignmentsThatNeedSlackDeletion()) {
+    await this.propagateAssignmentDeletion(id)
+  }
 }
 
 exports.propagateAssignment = async assignmentId => {
@@ -24,10 +28,15 @@ exports.propagateAssignment = async assignmentId => {
     'THREAD': common.fillTemplate(config.templates.slackAssignmentThread, assignment),
   }
 
-  let threadId = null
+  let threadId = assignment.slackId
 
   for (const job of ['INITIAL', 'THREAD']) {
-    if (job === 'THREAD' && threadId === null) {
+    // Skip whatever already made it to Slack, so a retry never posts a duplicate.
+    if (job === 'INITIAL' && assignment.slackId !== null) {
+      continue
+    }
+
+    if (job === 'THREAD' && (threadId === null || assignment.slackThreadId !== null)) {
       continue
     }
 
@@ -41,7 +50,7 @@ exports.propagateAssignment = async assignmentId => {
       params.append('thread_ts', threadId)
     }
 
-    let ok, ts
+    let ok, ts, channelId
 
     try {
       const response = await axios.post('https://slack.com/api/chat.postMessage', params)
@@ -50,6 +59,7 @@ exports.propagateAssignment = async assignmentId => {
 
       if (ok) {
         ts = response.data.ts
+        channelId = response.data.channel
       } else {
         throw response.data
       }
@@ -60,15 +70,24 @@ exports.propagateAssignment = async assignmentId => {
 
     if (ok && job === 'INITIAL') {
       await model.setAssignmentSlackId(assignment.id, ts)
+      // chat.update needs the channel id; slackChannel holds a channel name.
+      await model.setAssignmentSlackChannelId(assignment.id, channelId)
       threadId = ts
+    } else if (ok && job === 'THREAD') {
+      await model.setAssignmentSlackThreadId(assignment.id, ts)
     }
+  }
+
+  // The assignment may have been deleted while the posts above were in flight.
+  if (assignment.deleted !== null) {
+    await this.propagateAssignmentDeletion(assignmentId)
   }
 }
 
 exports.propagateAssignmentComments = async assignmentId => {
   const assignment = await model.getAssignment(assignmentId)
 
-  if (assignment === null || assignment.slackId === null) {
+  if (assignment === null || assignment.slackId === null || assignment.deleted !== null) {
     return
   }
 
@@ -109,6 +128,76 @@ exports.propagateAssignmentComments = async assignmentId => {
     if (ok) {
       await model.setAssignmentCommentSlackId(assignment.id, comment.id, ts)
     }
+  }
+}
+
+// Errors that will never succeed on a retry, so treat them as done rather than
+// letting sync() attempt the same edit on every startup forever.
+const TERMINAL_UPDATE_ERRORS = ['message_not_found', 'cant_update_message', 'channel_not_found']
+
+const updateMessage = async (channel, ts, text) => {
+  const params = new URLSearchParams()
+
+  params.append('token', config.slack.token)
+  params.append('channel', channel)
+  params.append('ts', ts)
+  params.append('text', text)
+
+  try {
+    const response = await axios.post('https://slack.com/api/chat.update', params)
+
+    if (response.data.ok) {
+      return true
+    }
+
+    if (TERMINAL_UPDATE_ERRORS.includes(response.data.error)) {
+      console.error('Giving up on Slack message ' + ts + ': ' + response.data.error)
+      return true
+    }
+
+    throw response.data
+  } catch (error) {
+    console.error('Failed to update Slack message ' + ts + ':')
+    console.error(error)
+
+    return false
+  }
+}
+
+exports.propagateAssignmentDeletion = async assignmentId => {
+  const assignment = await model.getAssignment(assignmentId)
+
+  if (assignment === null || assignment.deleted === null) {
+    return
+  }
+
+  const channel = assignment.slackChannelId || assignment.slackChannel
+  const assignmentText = config.templates.slackAssignmentDeleted ?? 'Denna uppdragsannons har raderats.'
+  const commentText = config.templates.slackAssignmentCommentDeleted ?? 'Denna komplettering har raderats.'
+
+  let done = true
+
+  if (assignment.slackId !== null) {
+    done = await updateMessage(channel, assignment.slackId, assignmentText) && done
+  }
+
+  // Assignments posted before slackThreadId existed have no id to update.
+  if (assignment.slackThreadId !== null) {
+    done = await updateMessage(channel, assignment.slackThreadId, assignmentText) && done
+  }
+
+  for (const comment of await model.getAssignmentComments(assignmentId)) {
+    if (comment.slackId === null) {
+      // Still being posted; retry later rather than leaving its text in Slack.
+      done = false
+      continue
+    }
+
+    done = await updateMessage(channel, comment.slackId, commentText) && done
+  }
+
+  if (done) {
+    await model.setAssignmentSlackDeleted(assignmentId)
   }
 }
 

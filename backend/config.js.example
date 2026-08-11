@@ -58,6 +58,8 @@ module.exports = {
     *Komplettering*:
     [[COMMENT]]
     `,
+    slackAssignmentDeleted: 'Denna uppdragsannons har raderats.',
+    slackAssignmentCommentDeleted: 'Denna komplettering har raderats.',
   },
   slack: {
     channels: {

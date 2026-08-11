@@ -6,25 +6,33 @@
   </template>
 
   <template v-if="assignment !== null">
-    <p>Du som har länken till publikationen kan på den här sidan lägga till kompletteringar. Tänk därför på att hålla länken hemlig!</p>
+    <p v-if="assignment.deleted">Publikationen har raderats och visas inte längre för andra.</p>
+    <p v-else>Du som har länken till publikationen kan på den här sidan lägga till kompletteringar. Tänk därför på att hålla länken hemlig!</p>
 
     <assignment :assignment="assignment" />
 
-    <form v-if="commentState === 'EDITING' || commentState === 'PUBLISHING'" @submit.prevent="submitComment">
-      <label>
-        Komplettera publikationen med ny information:
-        <textarea v-model="comment" style="height: 150px" :disabled="commentState === 'PUBLISHING'"></textarea>
+    <template v-if="!assignment.deleted">
+      <form v-if="commentState === 'EDITING' || commentState === 'PUBLISHING'" @submit.prevent="submitComment">
+        <label>
+          Komplettera publikationen med ny information:
+          <textarea v-model="comment" style="height: 150px" :disabled="commentState === 'PUBLISHING'"></textarea>
 
-        <input type="submit" value="Spara komplettering" :disabled="!comment || commentState === 'PUBLISHING'" />
-      </label>
-    </form>
+          <input type="submit" value="Spara komplettering" :disabled="!comment || commentState === 'PUBLISHING'" />
+        </label>
+      </form>
 
-    <p v-if="commentState === 'SAVED'"><strong>Tack!</strong> Din komplettering har sparats. <a @click="commentState = 'EDITING'">Skriv en till »</a></p>
+      <p v-if="commentState === 'SAVED'"><strong>Tack!</strong> Din komplettering har sparats. <a @click="commentState = 'EDITING'">Skriv en till »</a></p>
+
+      <p><a @click="deleteState = 'CONFIRMING'">Radera publikationen »</a></p>
+    </template>
   </template>
+
+  <confirm-modal v-if="deleteState !== 'IDLE'" title="Radera publikationen?" message="Publikationen slutar visas och meddelandena i Slack raderas. Detta kan inte ångras." confirm-label="Radera" busy-label="Raderar …" :busy="deleteState === 'DELETING'" @confirm="deleteAssignment" @cancel="deleteState = 'IDLE'" />
 </template>
 
 <script>
 import Assignment from '../components/Assignment.vue'
+import ConfirmModal from '../components/ConfirmModal.vue'
 import axios from 'axios'
 
 export default {
@@ -32,12 +40,14 @@ export default {
 
   components: {
     Assignment,
+    ConfirmModal,
   },
 
   data: () => ({
     assignment: null,
     comment: '',
     commentState: 'EDITING',
+    deleteState: 'IDLE',
     error: false,
   }),
 
@@ -80,6 +90,22 @@ export default {
       } catch (error) {
         alert('Ett oväntat fel inträffade när kompletteringen skulle sparas.')
         this.commentState = 'EDITING'
+      }
+    },
+
+    async deleteAssignment() {
+      this.deleteState = 'DELETING'
+
+      try {
+        await axios.delete('/api/assignments/' + this.assignment.id)
+
+        this.deleteState = 'IDLE'
+        this.commentState = 'EDITING'
+
+        await this.loadAssignment()
+      } catch (error) {
+        alert('Ett oväntat fel inträffade när publikationen skulle raderas.')
+        this.deleteState = 'CONFIRMING'
       }
     },
   },

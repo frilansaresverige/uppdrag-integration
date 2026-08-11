@@ -4,6 +4,7 @@ const express = require('express')
 
 const common = require('../common')
 const model = require('../model')
+const slack = require('../slack')
 
 const router = express.Router()
 
@@ -70,6 +71,17 @@ router.get('/:assignmentId', common.asyncHandler(async (req, res) => {
     return
   }
 
+  // Withheld server-side, so a withdrawn assignment cannot be read back
+  // through the API by anyone still holding the link.
+  if (assignment.deleted !== null) {
+    res.json({
+      id: assignment.id,
+      title: assignment.title,
+      deleted: true,
+    })
+    return
+  }
+
   res.json({
     id: assignment.id,
     senderType: assignment.senderType,
@@ -77,12 +89,38 @@ router.get('/:assignmentId', common.asyncHandler(async (req, res) => {
     title: assignment.title,
     description: assignment.description,
     contact: assignment.contact,
+    deleted: false,
+  })
+}))
+
+router.delete('/:assignmentId', common.asyncHandler(async (req, res) => {
+  const assignment = await model.getAssignment(req.params.assignmentId)
+
+  if (assignment === null) {
+    res.status(404).end()
+    return
+  }
+
+  await model.deleteAssignment(assignment.id)
+
+  res.status(204).end()
+
+  slack.propagateAssignmentDeletion(assignment.id).catch(error => {
+    console.error('Failed to propagate deletion of assignment ' + assignment.id + ' to Slack:')
+    console.error(error)
   })
 }))
 
 router.get('/:assignmentId/comments', common.asyncHandler(async (req, res) => {
-  if (!await model.assignmentExists(req.params.assignmentId)) {
+  const assignment = await model.getAssignment(req.params.assignmentId)
+
+  if (assignment === null) {
     res.status(404).end()
+    return
+  }
+
+  if (assignment.deleted !== null) {
+    res.json([])
     return
   }
 
@@ -94,7 +132,9 @@ router.get('/:assignmentId/comments', common.asyncHandler(async (req, res) => {
 }))
 
 router.post('/:assignmentId/comments', common.asyncHandler(async (req, res) => {
-  if (!await model.assignmentExists(req.params.assignmentId)) {
+  const assignment = await model.getAssignment(req.params.assignmentId)
+
+  if (assignment === null || assignment.deleted !== null) {
     res.status(404).end()
     return
   }

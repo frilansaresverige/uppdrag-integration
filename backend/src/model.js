@@ -72,10 +72,14 @@ exports.getAssignment = async assignmentId => {
       created,
       slackChannel,
       slackId,
+      slackThreadId,
+      slackChannelId,
       customerOrganizationNumber,
       customerFee,
       clientHourlyRate,
-      location
+      location,
+      deleted,
+      slackDeleted
     FROM assignment
     WHERE id = ?
     `,
@@ -95,6 +99,18 @@ exports.getAssignmentThatNeedSlackPropagation = async () => {
     SELECT id
     FROM assignment
     WHERE slackId IS NULL
+    `,
+  )
+
+  return ids.map(x => x.id)
+}
+
+exports.getAssignmentsThatNeedSlackDeletion = async () => {
+  const [ids] = await this.pool.query(
+    `
+    SELECT id
+    FROM assignment
+    WHERE deleted IS NOT NULL AND slackDeleted = 0
     `,
   )
 
@@ -170,6 +186,53 @@ exports.setAssignmentSlackId = async (assignmentId, slackId) => await this.pool.
     slackId,
     assignmentId,
   ],
+)
+
+exports.setAssignmentSlackThreadId = async (assignmentId, slackThreadId) => await this.pool.query(
+  `
+  UPDATE assignment
+  SET slackThreadId = ?
+  WHERE id = ?
+  `, [
+    slackThreadId,
+    assignmentId,
+  ],
+)
+
+exports.setAssignmentSlackChannelId = async (assignmentId, slackChannelId) => await this.pool.query(
+  `
+  UPDATE assignment
+  SET slackChannelId = ?
+  WHERE id = ?
+  `, [
+    slackChannelId,
+    assignmentId,
+  ],
+)
+
+// Guarded so a repeated delete keeps the original timestamp.
+exports.deleteAssignment = async assignmentId => {
+  const [result] = await this.pool.query(
+    `
+    UPDATE assignment
+    SET deleted = ?
+    WHERE id = ? AND deleted IS NULL
+    `, [
+      common.getTimestamp(),
+      assignmentId,
+    ],
+  )
+
+  return result.affectedRows === 1
+}
+
+exports.setAssignmentSlackDeleted = async assignmentId => await this.pool.query(
+  `
+  UPDATE assignment
+  SET slackDeleted = 1
+  WHERE id = ?
+  `,
+  [assignmentId],
 )
 
 exports.setAssignmentCommentSlackId = async (assignmentId, id, slackId) => await this.pool.query(
