@@ -1,18 +1,23 @@
 <template>
   <div v-if="assignment" class="wrapper">
     <h3>{{ assignment.title }}</h3>
-    <p>{{ assignment.description }}</p>
 
-    <h4>Uppdragsgivare</h4>
-    <p>{{ assignment.customerName }}</p>
+    <p v-if="assignment.deleted" class="deleted">Denna uppdragsannons har raderats.</p>
 
-    <h4>Kontaktuppgifter</h4>
-    <p>{{ assignment.contact }} ({{ niceSenderType(assignment.senderType) }})</p>
+    <template v-else>
+      <p>{{ assignment.description }}</p>
 
-    <template v-if="assignment.comments">
-      <template v-for="comment in assignment.comments" :key="comment.id">
-        <h4>Komplettering {{ niceTimestamp(comment.created) }}</h4>
-        <p>{{ comment.comment }}</p>
+      <h4>Uppdragsgivare</h4>
+      <p>{{ assignment.customerName }}</p>
+
+      <h4>Kontaktuppgifter</h4>
+      <p>{{ assignment.contact }} ({{ niceSenderType(assignment.senderType) }})</p>
+
+      <template v-if="assignment.comments">
+        <template v-for="comment in assignment.comments" :key="comment.id">
+          <h4>Komplettering {{ niceTimestamp(comment.created) }}</h4>
+          <p>{{ comment.comment }}</p>
+        </template>
       </template>
     </template>
   </div>
@@ -69,5 +74,10 @@ export default {
 
 p {
   white-space: pre-wrap;
+}
+
+.deleted {
+  color: #777777;
+  font-style: italic;
 }
 </style>

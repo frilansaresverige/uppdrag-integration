@@ -36,5 +36,11 @@ ALTER TABLE `assignmentComment`
 ALTER TABLE `assignment`
   ADD COLUMN `customerOrganizationNumber` varchar(15) COLLATE utf8mb4_unicode_ci AFTER `customerName`,
   ADD COLUMN `customerFee` varchar(50) DEFAULT NULL AFTER `customerOrganizationNumber`,
-  ADD COLUMN `clientHourlyRate` varchar(20) DEFAULT NULL AFTER `customerFee`;
+  ADD COLUMN `clientHourlyRate` varchar(20) DEFAULT NULL AFTER `customerFee`,
   ADD COLUMN `location` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL;
+
+ALTER TABLE `assignment`
+  ADD COLUMN `slackThreadId` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  ADD COLUMN `slackChannelId` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  ADD COLUMN `deleted` bigint(30) DEFAULT NULL,
+  ADD COLUMN `slackDeleted` tinyint(1) NOT NULL DEFAULT 0;
