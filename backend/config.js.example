@@ -43,7 +43,7 @@ module.exports = {
 
     *Mellanhandsavgift:* [[CUSTOMER_FEE]] 
 
-    *Minimum arvode:* [[HOURLY_RATE]] kr/h
+    *Maximalt arvode:* [[HOURLY_RATE]] kr/h
     
     *Kontaktuppgifter:*
     [[CONTACT]]
