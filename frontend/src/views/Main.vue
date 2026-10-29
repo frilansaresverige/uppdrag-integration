@@ -66,7 +66,7 @@
       <div class="columns">
         <div class="column">
           <label>
-            Minimumarvode till frilansaren:
+            Högsta arvode till frilansaren:
             <div class="with-unit">
               <input v-model.number="assignment.clientHourlyRate" type="number" placeholder="t.ex 1000" />
               <span class="unit">kr/h</span>
